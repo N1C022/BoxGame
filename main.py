@@ -14,26 +14,30 @@ GREEN = (0, 255, 0)
 PURPLE = (160, 32, 240)
 ORANGE = (255, 165, 0)
 BLACK = (12, 12, 12)
+
 player1: dict = {"name":"", "color":None}
 player2: dict = {"name":"", "color":None}
 font = pygame.font.SysFont('Calibri(Body)', 25)
-print("RULES, 2 players/ click in a box then up right down or left to draw a line, if you complete a box you get a point")
-player1["name"]=input("Enter Player1's Name")
-player1["color"] = input("Choose a color: RED, BLUE, GREEN, PURPLE or ORANGE")
-while player1["color"]!= "RED" and player1["color"]!= "BLUE" and player1["color"]!= "GREEN" and player1["color"]!= "PURPLE" and player1["color"]!= "ORANGE": player1["color"] = input("Choose a color: RED, BLUE, GREEN, PURPLE or ORANGE")
-player2["name"]=input("Enter Player2's Name")
-player2["color"] = input("Choose a color: RED, BLUE, GREEN, PURPLE or ORANGE")
-while player2["color"]!= "RED" and player2["color"]!= "BLUE" and player2["color"]!= "GREEN" and player2["color"]!= "PURPLE" and player2["color"]!= "ORANGE": player2["color"] = input("Choose a color: RED, BLUE, GREEN, PURPLE or ORANGE")
-if player1["color"] == "RED": player1["color"] = RED
-elif player1["color"] == "BLUE": player1["color"] = BLUE
-elif player1["color"] == "GREEN": player1["color"] = GREEN
-elif player1["color"] == "PURPLE": player1["color"] = PURPLE
-elif player1["color"] == "ORANGE": player1["color"] = ORANGE
-if player2["color"] == "RED": player2["color"] = RED
-elif player2["color"] == "BLUE": player2["color"] = BLUE
-elif player2["color"] == "GREEN": player2["color"] = GREEN
-elif player2["color"] == "PURPLE": player2["color"] = PURPLE
-elif player2["color"] == "ORANGE": player2["color"] = ORANGE
+
+COLORS = {
+    "RED": RED,
+    "BLUE": BLUE,
+    "GREEN": GREEN,
+    "PURPLE": PURPLE,
+    "ORANGE": ORANGE,
+}
+
+def get_player_color():
+    color = input("Choose a color: RED, BLUE, GREEN, PURPLE or ORANGE").upper()
+    while color not in COLORS:
+        color = input("Choose a color: RED, BLUE, GREEN, PURPLE or ORANGE").upper()
+    return COLORS[color]
+
+player1["name"] = input("Enter Player1's Name")
+player1["color"] = get_player_color()
+player2["name"] = input("Enter Player2's Name")
+player2["color"] = get_player_color()
+
 class Box:
   def __init__(self, r, c):
     self.r = r
@@ -77,13 +81,8 @@ class Box:
         pygame.draw.line(win, WHITE, (self.edges[index][0]),
                     (self.edges[index][1]), 2)
 
-def create_boxs():
-  boxs = []
-  for r in range(ROWS):
-    for c in range(COLS):
-      box = Box(r, c)
-      boxs.append(box)
-  return boxs
+def create_boxes():
+    return [Box(r, c) for r in range(ROWS) for c in range(COLS)]
 
 def reset_boxs():
   pos = None
@@ -108,7 +107,7 @@ def reset_player():
   return turn, players, player, next_turn
 
 gameover = False
-boxs = create_boxs()
+boxs = create_boxes()
 pos, boxy, up, right, bottom, left = reset_boxs()
 fillcount, p1_score, p2_score = reset_score()
 turn, players, player, next_turn = reset_player()
@@ -132,7 +131,7 @@ while running:
 
       if event.key == pygame.K_r:
         gameover = False
-        boxs = create_boxs()
+        boxs = create_boxes()
         pos, boxy, up, right, bottom, left = reset_boxs()
         fillcount, p1_score, p2_score = reset_score()
         turn, players, player, next_turn = reset_player()
